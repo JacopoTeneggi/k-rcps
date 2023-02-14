@@ -24,6 +24,8 @@ jobs:
           name: Upload coverage results to Codecov
           command: |
             codecov
+      - store_test_results:
+          path: test-results
 
 workflows:
   test:
