@@ -10,27 +10,17 @@ $K$-RCPS is a high-dimensional extension of the [Risk Controlling Prediction Set
 
 It is based on $\ell^{\gamma}$: a convex upper-bound to the $01$ loss $\ell^{01}$
 
-<div style="display:flex;justify-content:center">
-     <div style="background-color:white;padding:5px">
-          <img src="assets/loss_x.jpg" width="200"/>
-     </div>
-     <div style="background-color:white;padding:5px">
-          <img src="assets/loss_lambda.jpg" width="200"/>
-     </div>
-</div>
+<p align="center">
+  <img width="460" src="assets/loss.jpg">
+</p>
 
 ## Demo
 
 The demo is included in the `demo.ipynb` notebook. It showcases how to use the $K$-RCPS calibration procedure on dummy data.
 
-<div style="display:flex;justify-content:center">
-     <div>
-          <img src="assets/samples.gif" width="500"/>
-     </div>
-     <div>
-          <img src="assets/lambda_k.jpg" width="500"/>
-     </div>
-</div>
+<p align="center">
+  <img src="assets/results.gif">
+</p>
 
 which reduces the mean interval length compared to RCPS on the same data by $\approx 9\%$.
 
