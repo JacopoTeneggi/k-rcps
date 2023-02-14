@@ -1,3 +1,4 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
 asttokens==2.2.1
 attrs==22.2.0
 backcall==0.2.0
@@ -79,9 +80,9 @@ stack-data==0.6.2
 tifffile==2023.2.3
 tokenize-rt==5.0.0
 tomli==2.0.1
-torch==1.13.1
-torchaudio==0.13.1
-torchvision==0.14.1
+torch==1.13.1+cpu
+torchaudio==0.13.1+cpu
+torchvision==0.14.1+cpu
 tornado==6.2
 tqdm==4.64.1
 traitlets==5.9.0
