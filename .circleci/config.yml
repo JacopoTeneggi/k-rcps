@@ -16,11 +16,12 @@ jobs:
       - python/install-packages:
           pkg-manager: pip
           pip-dependency-file: requirements.txt
-      - python/test:
-          args: "--cov=krcps"
-          test-tool: pytest
       - run:
-          name: Upload coverage to Codecov
+          name: Run tests
+          command: |
+            pytest --cov=krcps --junitxml=test-results/junit.xml
+      - run:
+          name: Upload coverage results to Codecov
           command: |
             codecov
 
