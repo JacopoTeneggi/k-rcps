@@ -39,6 +39,15 @@ def test_quantile_regression():
     expected_l0 = expected_u0 = x
     assert torch.all(l0 == expected_l0) and torch.all(u0 == expected_u0)
 
+    l, u = I(0.1)
+    expected_l, expected_u = x - 0.1, x + 0.1
+    assert torch.all(l == expected_l) and torch.all(u == expected_u)
+
+    l = u = torch.zeros_like(x)
+    denoised = torch.stack([l, x, u], dim=1)
+
+    I = _quantile_regression(denoised)
+
     l, u = I(1)
-    expected_l, expected_u = x - 1, x + 1
+    expected_l, expected_u = x - 1e-02, x + 1e-02
     assert torch.all(l == expected_l) and torch.all(u == expected_u)
