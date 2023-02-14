@@ -34,6 +34,28 @@ def test_register_bound():
     assert get_bound("test")(n, delta, loss) == (n, delta, loss)
 
 
+def test_register_membership():
+    from .utils import register_membership, get_membership
+
+    @register_membership(name="test")
+    def _test(set: torch.Tensor, l: torch.Tensor, u: torch.Tensor, k: int):
+        return set, l, u, k
+
+    set, l, u, k = torch.Tensor(1), torch.Tensor(2), torch.Tensor(3), 4
+    assert get_membership("test")(set, l, u, k) == (set, l, u, k)
+
+
+def test_register_calibration():
+    from .utils import register_calibration, get_calibration
+
+    @register_calibration(name="test")
+    def _test(x: torch.Tensor):
+        return x
+
+    x = torch.Tensor(1)
+    assert get_calibration("test")(x) == x
+
+
 def test_split_idx():
     from .utils import _split_idx
 

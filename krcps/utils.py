@@ -62,8 +62,8 @@ def get_bound(name: str, *args, **kwargs) -> Callable:
 
 
 def get_membership(name: str, *args, **kwargs) -> Callable:
-    def _f(*fargs, **kfargs):
-        return _MEMBERSHIP_DICT[name](*fargs, *args, **kwargs, **kfargs)
+    def _f(set: torch.Tensor, l: torch.Tensor, u: torch.Tensor, k: int, **kfargs):
+        return _MEMBERSHIP_DICT[name](set, l, u, k, *args, **kwargs, **kfargs)
 
     return _f
 
