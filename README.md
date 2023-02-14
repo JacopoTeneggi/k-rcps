@@ -22,7 +22,7 @@ The demo is included in the `demo.ipynb` notebook. It showcases how to use the $
   <img src="assets/results.gif">
 </p>
 
-which reduces the mean interval length compared to RCPS on the same data by $\approx 9\%$.
+which reduces the mean interval length compared to RCPS on the same data by $\approx 9$%.
 
 ## Usage
 
