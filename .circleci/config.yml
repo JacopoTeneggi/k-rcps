@@ -12,6 +12,14 @@ jobs:
       - python/install-packages:
           pkg-manager: pip
           pip-dependency-file: requirements.txt
+          pre-install: pip install --upgrade pip
+      - python/test:
+          args: "--cov=krcps"
+          test-tool: pytest
+      - run:
+          name: Upload coverage to Codecov
+          command: |
+            codecov
 
 workflows:
   test:
