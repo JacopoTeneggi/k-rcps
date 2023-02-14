@@ -21,6 +21,7 @@ scipy==1.10.0
 scs==3.2.2
 tifffile==2023.2.3
 tomli==2.0.1
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch==1.13.1+cpu
 torchaudio==0.13.1+cpu
 torchvision==0.14.1+cpu
