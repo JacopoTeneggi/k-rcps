@@ -1,5 +1,8 @@
 # How to Trust Your Diffusion Model:<br /> A Convex Optimization Approach to Conformal Risk Control
 
+[![codecov](https://codecov.io/gh/Sulam-Group/k-rcps/branch/main/graph/badge.svg?token=PBTV5HYXKR)](https://codecov.io/gh/Sulam-Group/k-rcps)
+[![Sulam-Group](https://circleci.com/gh/Sulam-Group/k-rcps.svg?style=shield)](https://app.circleci.com/pipelines/github/Sulam-Group/k-rcps)
+
 This is the official implementation of the paper [*How To Trust Your Diffusion Model: A Convex Optimization Approach to Conformal Risk Control*](https://arxiv.org/abs/2302.03791)
 
 by [Jacopo Teneggi](https://jacopoteneggi.github.io), Matt Tivnan, J Webster Stayman, and [Jeremias Sulam](https://sites.google.com/view/jsulam).
