@@ -92,6 +92,14 @@ class CelebA(d.CelebA):
             self.bbox = self.bbox[:l]
             self.landmarks_align = self.landmarks_align[:l]
             self.attr = self.attr[:l]
+        if kwargs["split"] == "test":
+            self.op = "test"
+            l = int(1e03)
+            self.filename = self.filename[:l]
+            self.identity = self.identity[:l]
+            self.bbox = self.bbox[:l]
+            self.landmarks_align = self.landmarks_align[:l]
+            self.attr = self.attr[:l]
         self.ids = self._ids()
 
     def __getitem__(self, idx):

@@ -1,6 +1,6 @@
 import ml_collections
-from . import utils
-from .data import abdomen
+from configs import utils
+from configs.data import abdomen
 
 
 @utils.register_config(name="default_abdomen")

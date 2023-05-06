@@ -1,6 +1,6 @@
 import os
 import ml_collections
-from . import celeba_ncsnpp, utils
+from configs import celeba_ncsnpp, utils
 
 
 @utils.register_config(name="celeba_im2im_ncsnpp")

@@ -1,5 +1,5 @@
 import os
-from . import celeba_im2im_ncsnpp, utils
+from configs import celeba_im2im_ncsnpp, utils
 
 
 @utils.register_config(name="celeba_im2im_ncsnpp_mc_dropout")

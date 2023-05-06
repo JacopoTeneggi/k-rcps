@@ -1,5 +1,5 @@
 import os
-from . import default_celeba_configs, utils
+from configs import default_celeba_configs, utils
 
 
 @utils.register_config(name="celeba_ncsnpp")

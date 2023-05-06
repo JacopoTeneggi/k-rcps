@@ -1,6 +1,6 @@
 import os
 import ml_collections
-from . import abdomen_ncsnpp, utils
+from configs import abdomen_ncsnpp, utils
 
 
 @utils.register_config(name="abdomen_im2im_ncsnpp")

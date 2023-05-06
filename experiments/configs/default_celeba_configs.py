@@ -1,6 +1,6 @@
 import ml_collections
-from . import utils
-from .data import celeba
+from configs import utils
+from configs.data import celeba
 
 
 @utils.register_config(name="default_celeba")
@@ -8,7 +8,7 @@ def get_config():
     config = ml_collections.ConfigDict()
     # training
     config.training = training = ml_collections.ConfigDict()
-    training.n_iters = 1300000
+    training.n_iters = 400000
     training.checkpoint_freq = 50000
     training.log_freq = 50
     training.likelihood_weighting = False

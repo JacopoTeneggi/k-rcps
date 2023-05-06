@@ -1,5 +1,5 @@
 import os
-from . import abdomen_ncsnpp, utils
+from configs import abdomen_ncsnpp, utils
 
 
 @utils.register_config(name="abdomen_ncsnpp_conffusion")
@@ -10,6 +10,6 @@ def get_config():
 
     # model
     model = config.model
-    model.name = "conffusion"
+    model.name = "ncsnpp_conffusion"
 
     return config
