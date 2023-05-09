@@ -44,9 +44,6 @@ def main(_):
     sigma_max = config.model.sigma_max
 
     sigma = lambda t: sigma_min * (sigma_max / sigma_min) ** t
-    diffusion = lambda t: sigma(t) * torch.sqrt(
-        torch.tensor(2 * (np.log(sigma_max) - np.log(sigma_min)), device=t.device)
-    )
 
     def loss_fn(input):
         # sample time

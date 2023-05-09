@@ -162,3 +162,7 @@ cython_debug/
 
 # Experiments
 experiments/data
+experiments/checkpoints
+experiments/denoising
+experiments/calibration
+wandb/
