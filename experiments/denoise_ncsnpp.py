@@ -10,19 +10,17 @@ from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 from dataset import get_dataset
-from models import ncsnpp, im2im_ncsnpp
+from models import ncsnpp
 from models import utils as mutils
 
 FLAGS = flags.FLAGS
 
 config_flags.DEFINE_config_file("config", None, "Configuration", lock_config=True)
-flags.DEFINE_float("sigma0", None, "The initial noise level.")
-flags.DEFINE_string("op", None, "Which split to use. Either calibration or test.")
 flags.DEFINE_string("workdir", "./", "Working directory")
 flags.DEFINE_string("gpu", "0,1,2,3,4,5,6,7", "GPU(s) to use")
 
 
-def common(device, world_size, config, workdir, sigma0, op, batch_size=1):
+def common(device, world_size, config, workdir, batch_size=1):
     # setup process
     os.environ["MASTER_ADDR"] = "localhost"
     os.environ["MASTER_PORT"] = "12355"
@@ -33,11 +31,8 @@ def common(device, world_size, config, workdir, sigma0, op, batch_size=1):
     # setup dirs
     denoising_dir = os.path.join(workdir, "denoising")
     denoising_dataset_dir = os.path.join(denoising_dir, config.data.name)
-    denoising_sigma_dir = os.path.join(denoising_dataset_dir, str(sigma0))
-    perturbed_dir = os.path.join(denoising_sigma_dir, "perturbed", op)
-    denoised_dir = os.path.join(
-        os.path.join(denoising_sigma_dir, group_id, "denoised", op)
-    )
+    perturbed_dir = os.path.join(denoising_dataset_dir, "perturbed")
+    denoised_dir = os.path.join(os.path.join(denoising_dataset_dir, config.name))
     os.makedirs(denoised_dir, exist_ok=True)
 
     # setup dataset
@@ -48,24 +43,26 @@ def common(device, world_size, config, workdir, sigma0, op, batch_size=1):
         dataset, batch_size=batch_size, sampler=sampler, num_workers=4
     )
 
+    if config.data.dataset == "CelebA":
+        sigma0 = 1.0
+    if config.data.dataset == "AbdomenCT-1K":
+        sigma0 = 0.4
+
     # setup model
-    model = mutils.get_model(config, checkpoint=group_id)
+    model = mutils.get_model(config, checkpoint=True)
     model = model.to(device)
     model.eval()
     model = DDP(model, device_ids=[device], output_device=device)
     torch.set_grad_enabled(False)
 
-    return dataloader, model, perturbed_dir, denoised_dir
+    return dataloader, sigma0, model, perturbed_dir, denoised_dir
 
 
-def sample(rank, world_size, config, workdir, sigma0, op, batch_size=1, N=300):
+def sample(rank, world_size, config, workdir, batch_size=1, N=300):
     device = rank
-    dataloader, model, perturbed_dir, denoised_dir = common(
-        device, world_size, run_id, config, workdir, sigma0, op
+    dataloader, sigma0, model, perturbed_dir, denoised_dir = common(
+        device, world_size, config, workdir, batch_size=batch_size
     )
-
-    denoised_dir = os.path.join(denoised_dir, str(N))
-    os.makedirs(denoised_dir, exist_ok=True)
 
     # Initialize SDE
     sigma_min, sigma_max = config.model.sigma_min, config.model.sigma_max
@@ -133,15 +130,13 @@ def sample(rank, world_size, config, workdir, sigma0, op, batch_size=1, N=300):
 
 def main(_):
     config = FLAGS.config
-    sigma0 = FLAGS.sigma0
-    op = FLAGS.op
     workdir = FLAGS.workdir
     gpu = FLAGS.gpu
 
     os.environ["CUDA_VISIBLE_DEVICES"] = gpu
     world_size = len(gpu.split(","))
 
-    mp.spawn(sample, args=(world_size, config, workdir, sigma0, op), nprocs=world_size)
+    mp.spawn(sample, args=(world_size, config, workdir), nprocs=world_size)
 
 
 if __name__ == "__main__":

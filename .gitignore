@@ -165,4 +165,5 @@ experiments/data
 experiments/checkpoints
 experiments/denoising
 experiments/calibration
+experiments/figures
 wandb/

@@ -1,6 +1,5 @@
 import os
 import deepspeed as ds
-import numpy as np
 import torch
 import wandb
 from absl import app, flags

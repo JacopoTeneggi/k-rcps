@@ -1,5 +1,6 @@
 import os
-from configs import default_abdomen_configs, utils
+from configs import utils
+from experiments.configs import default_abdomen
 
 
 @utils.register_config(name="abdomen_ncsnpp")

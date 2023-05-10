@@ -10,35 +10,22 @@ from tqdm import tqdm
 FLAGS = flags.FLAGS
 
 config_flags.DEFINE_config_file("config", None, "Configuration", lock_config=False)
-flags.DEFINE_string("id", None, "Experiment Unique ID")
 flags.DEFINE_string("gpu", "0", "GPU to use")
 flags.DEFINE_string("workdir", "./", "Working directory")
 
 
 def main(_):
     config = FLAGS.config
-    run_id = FLAGS.id
     gpu = FLAGS.gpu
     workdir = FLAGS.workdir
 
     os.environ["CUDA_VISIBLE_DEVICES"] = gpu
     device = torch.device(f"cuda" if torch.cuda.is_available() else "cpu")
 
-    group_id = os.path.join(f"{config.name}_mc_dropout", str(run_id))
-    dataset_id = f"{config.data.name}_{config.data.image_size}"
-
-    if config.data.dataset == "CelebA":
-        sigma0 = 1.0
-    if config.data.dataset == "AbdomenCT1K":
-        sigma0 = 0.4
-
     denoising_dir = os.path.join(workdir, "denoising")
-    denoising_dataset_dir = os.path.join(denoising_dir, dataset_id)
-    denoising_sigma_dir = os.path.join(denoising_dataset_dir, str(sigma0))
-    perturbed_dir = os.path.join(denoising_sigma_dir, "perturbed", "calibration")
-    denoised_dir = os.path.join(
-        denoising_sigma_dir, group_id, "denoised", "calibration"
-    )
+    denoising_dataset_dir = os.path.join(denoising_dir, config.data.name)
+    perturbed_dir = os.path.join(denoising_dataset_dir, "perturbed")
+    denoised_dir = os.path.join(denoising_dataset_dir, config.name)
     os.makedirs(denoised_dir, exist_ok=True)
 
     batch_size = 1
@@ -48,6 +35,11 @@ def main(_):
         dataset, batch_size=batch_size, shuffle=False, num_workers=4
     )
 
+    if config.data.dataset == "CelebA":
+        sigma0 = 1.0
+    if config.data.dataset == "AbdomenCT1K":
+        sigma0 = 0.4
+
     def enable_dropout(model):
         for m in model.modules():
             if m.__class__.__name__.startswith("Dropout"):
@@ -55,8 +47,7 @@ def main(_):
 
     from models import im2im_ncsnpp
 
-    im2im_ncsnpp_group_id = os.path.join(config.name, str(run_id))
-    model = mutils.get_model(config, checkpoint=im2im_ncsnpp_group_id)
+    model = mutils.get_model(config.model.im2im_config, checkpoint=True)
     model = model.to(device)
     model.eval()
     enable_dropout(model)

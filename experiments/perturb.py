@@ -1,5 +1,4 @@
 import os
-import sys
 import ml_collections
 import torch
 from absl import app, flags
@@ -14,10 +13,10 @@ flags.DEFINE_string("workdir", "./", "Working directory")
 
 
 def main(_):
+    data_config = FLAGS.config
     workdir = FLAGS.workdir
     denoising_dir = os.path.join(workdir, "denoising")
 
-    data_config = FLAGS.config
     if data_config.dataset == "CelebA":
         data_config.image_size, sigma0 = 128, 1.0
     if data_config.dataset == "AbdomenCT-1K":

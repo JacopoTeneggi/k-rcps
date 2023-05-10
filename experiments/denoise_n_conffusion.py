@@ -4,54 +4,43 @@ from absl import app, flags
 from ml_collections.config_flags import config_flags
 from torch.utils.data import DataLoader
 from dataset import get_dataset
-from models.conffusion import Conffusion
 from models import utils as mutils
 from tqdm import tqdm
 
 FLAGS = flags.FLAGS
 
 config_flags.DEFINE_config_file("config", None, "Configuration", lock_config=False)
-flags.DEFINE_string("id", None, "Experiment Unique ID")
 flags.DEFINE_string("gpu", "0", "GPU to use")
 flags.DEFINE_string("workdir", "./", "Working directory")
 
 
 def main(_):
     config = FLAGS.config
-    run_id = FLAGS.id
     gpu = FLAGS.gpu
     workdir = FLAGS.workdir
 
     os.environ["CUDA_VISIBLE_DEVICES"] = gpu
     device = torch.device(f"cuda" if torch.cuda.is_available() else "cpu")
 
-    group_id = os.path.join(f"{config.name}_conffusion", str(run_id))
-    dataset_id = f"{config.data.name}_{config.data.image_size}"
+    denoising_dir = os.path.join(workdir, "denoising")
+    denoising_dataset_dir = os.path.join(denoising_dir, config.data.name)
+    perturbed_dir = os.path.join(denoising_dataset_dir, "perturbed")
+    denoised_dir = os.path.join(denoising_dataset_dir, config.name)
+    os.makedirs(denoised_dir, exist_ok=True)
+
+    batch_size = 4
+    config.data.return_img_id = True
+    _, dataset = get_dataset(config)
+    dataloader = DataLoader(
+        dataset, batch_size=batch_size, shuffle=False, num_workers=4
+    )
 
     if config.data.dataset == "CelebA":
         sigma0 = 1.0
     if config.data.dataset == "AbdomenCT1K":
         sigma0 = 0.4
 
-    checkpoint_dir = os.path.join(FLAGS.workdir, "checkpoints", group_id)
-    denoising_dir = os.path.join(workdir, "denoising")
-    denoising_dataset_dir = os.path.join(denoising_dir, dataset_id)
-    denoising_sigma_dir = os.path.join(denoising_dataset_dir, str(sigma0))
-    perturbed_dir = os.path.join(denoising_sigma_dir, "perturbed", "calibration")
-    denoised_dir = os.path.join(
-        denoising_sigma_dir, group_id, "denoised", "calibration"
-    )
-    os.makedirs(denoised_dir, exist_ok=True)
-
-    config.data.return_img_id = True
-    _, dataset = get_dataset(config)
-    dataloader = DataLoader(dataset, batch_size=4, shuffle=False, num_workers=4)
-
-    model = Conffusion(config)
-    state_dict = torch.load(
-        os.path.join(checkpoint_dir, "model.pt"), map_location=device
-    )
-    model.load_state_dict(state_dict)
+    model = mutils.get_model(config, checkpoint=True)
     model = model.to(device)
     model.eval()
     torch.set_grad_enabled(False)
